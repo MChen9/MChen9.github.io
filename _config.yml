@@ -24,17 +24,18 @@ description: A virtual proof that name is awesome!
 # List of links in the navigation bar
 navbar-links:
   About Me: "aboutme"
-  Resources:
-    - Beautiful Jekyll: "http://deanattali.com/beautiful-jekyll/"
-    - Learn markdown: "http://www.markdowntutorial.com/"
-    - GitHub Pages: "https://pages.github.com/"
+  Algorithm and Data Structure:
+    - Leetcode: ''http://MChen9.github.io/leetcode/''
+    #- Beautiful Jekyll: "http://deanattali.com/beautiful-jekyll/"
+    #- Learn markdown: "http://www.markdowntutorial.com/"
+    #- GitHub Pages: "https://pages.github.com/"
   #Author's home: "http://deanattali.com"
   Machine Learning:
     - Fundamental Concept
 
 # Image to show in the navigation bar - image must be a square (width = height)
 # Remove this parameter if you don't want an image in the navbar
-avatar: "/img/avatar-icon.png"
+# avatar: "/img/avatar-icon.png"
 
 # If you want to have an image logo in the top-left corner instead of the title text,
 # then specify the following parameter
@@ -75,9 +76,9 @@ author:
 social-network-links:
   rss: true
   email: "someone@example.com"
-  facebook: daattali
-  github: daattali
-  twitter: daattali
+#  facebook: daattali
+  github: MChen9
+#  twitter: daattali
 #  reddit: yourname
 #  google-plus: +DeanAttali
 #  linkedin: daattali
@@ -94,14 +95,14 @@ social-network-links:
 
 # Select which share links to show in posts
 share-links-active:
-  twitter: true
-  facebook: true
-  google: false
+#  twitter: true
+#  facebook: true
+#  google: false
   linkedin: true
 
 # How to display the link to the website in the footer
 # Remove this if you don't want a link in the footer
-url-pretty: "MyWebsite.com"  # eg. "deanattali.com/beautiful-jekyll"
+url-pretty: "MChen9.github.io"  # eg. "deanattali.com/beautiful-jekyll"
 
 # --- Web Statistics Section --- #
 
