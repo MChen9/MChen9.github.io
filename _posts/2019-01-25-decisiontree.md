@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Fundamental Algorithms
-tag: Machine Learning
 subtitle: Decision Tree
+tag: Machine Learning
 ---
 ### Import Packages
 ~~~
