@@ -1,9 +1,12 @@
 ---
 layout: post
-title: Fundamental Algorithms
+title: Fundamental Machine Learning Algorithms I
 subtitle: Decision Tree
 tag: Machine Learning
 ---
+Decision tree is one of the most popular algorithms in classification. 
+I implement this algorithm by Python. Below is the codes and procedures.
+
 ### Import Packages
 ~~~
 import pandas as pd
