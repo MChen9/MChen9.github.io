@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: Fundamental Algorithms
 tag: Machine Learning
 subtitle: Decision Tree
