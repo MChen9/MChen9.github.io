@@ -3,6 +3,7 @@ layout: post
 title: Fundamental Algorithms
 subtitle: Decision Tree
 tag: Machine Learning
+comments:True
 ---
 ### Import Packages
 ~~~
