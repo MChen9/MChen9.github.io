@@ -3,344 +3,354 @@ layout: page
 title: Fundamental Algorithms
 subtitle: Decision Tree
 ---
+### Import Packages
 ~~~
 import pandas as pd
-import numpy as np
 from scipy.io import arff
+from collections import Counter
+import numpy as np
 import sys
 ~~~
 
 ### Tree Construction
 ~~~
-class Tree(object):
-    def __init__(self, value=None, sub=[], type=None, level=None, sign=None, typecounts=None, info=None, cls=None,
-                 parent=None):  # type is the selected feature
-
-        self.sub = sub  # sub tree
-        self.value = value  # node feature value(not feature but the partition value), can be used to classify testing samples for numeric is the threshold
-        self.type = type  # type of feature to split A1,A2...etc
-        self.level = level  # level of the node
-        self.sign = sign  # less or greater for numeric splits
-        self.typecounts = typecounts  # count of instances of each class
-        self.info = info  # cross entropy of the node
-        self.stopcrt = None
-        self.cls = cls
+class Node:
+    def __init__(self, parent):
         self.parent = parent
+        self.children = []
+        self.feature = None
+        self.split = None
+        self.label = None
+
 ~~~
 
-### Convert Bytes Type into String
+### Nominal Features Split
 ~~~
-def convert(x):
-    return str(x, encoding="utf-8")
+def NominalSplit(Features, D, X):
+    H = Entropy(Counter(D['class']))
+    h, p = [], []
+    for x in Features[X][1]:
+        df = D[D[X].str.decode('utf-8') == x]
+        h.append(Entropy(Counter(df['class'])))
+        p.append(len(df) / len(D[X]))
+
+    entropy = []
+    for i in range(len(h)):
+        entropy.append(p[i] * h[i])
+
+    infogain = H - np.sum(entropy)
+    return infogain
 ~~~
 
+### Determine Candidate Splits
+~~~
+def DetermineCandidateSplits(D, X):
+    Vbar = []
+    InfoGain = []
+    setdx = sorted(set(D[X]))
+    if len(setdx) == 1:
+        return 0, 0
+    else:
+        for i in range(len(setdx) - 1):
+            vbar = (setdx[i] + setdx[i + 1]) / 2
+            Vbar.append(vbar)
+            C = [D[D[X] <= vbar], D[D[X] > vbar]]
+            InfoGain.append(FindBestSplit(D, C))
+
+        # break tie within one feature
+        LargestestInfoGain = np.argwhere(InfoGain == np.amax(InfoGain)).flatten().tolist()
+        Threshold = min([Vbar[x] for x in LargestestInfoGain])
+        maxinfogain = max(InfoGain)
+
+        return Threshold, maxinfogain
+
+
+~~~
+### Calculate Entropy
+~~~
+def Entropy(counts):
+    try:
+        Sum = sum((counts).values())
+        p = [x / Sum for x in counts.values()]
+        H = -p[0] * np.log2(p[0]) - p[1] * np.log2(p[1])
+    except IndexError:
+        H = 0
+    return H
+
+~~~
 ### Calculate Information Gain
 ~~~
+def FindBestSplit(D, C):
+    H = Entropy(Counter(D['class']))
+    c1 = C[0]['class']
+    c2 = C[1]['class']
+    H1 = Entropy(Counter(c1))
+    H2 = Entropy(Counter(c2))
 
-def info(num):
-    # list of 2 [a,b]
-    # #return entropy of the candidate subtree
-    num = list(num)
-    if len(num) == 1:
-        return 0
-    if not num:
-        return np.inf
-    else:
-
-        a = num[0]
-        b = num[1]
-        if a == 0 and b == 0:
-            return None
-        if not a * b:
-            return 0
-        s = sum(num)
-        inf = -a / s * np.log2(a / s) - b / s * np.log2(b / s)
-        return inf
+    a = len(c1) / (len(c1) + len(c2))
+    b = len(c2) / (len(c1) + len(c2))
+    InfoGain = H - (a * H1 + b * H2)
+    return InfoGain
 
 ~~~
-
-### for Numerical Feature
+### Core Algorithm
 ~~~
-def find_numeric_threshold(cutdata, feature):
-    # return threshold of the selected feature
-    numeric_value = sorted(cutdata[feature].values)  # return a unique sorted array
-    threshold = [0] * (len(numeric_value) - 1)
-    infomin = np.inf
-    # if cutdata.shape[0]==15:
-    #    print('breakpoint')
-    for i in range(1, len(numeric_value)):
-        threshold[i - 1] = (numeric_value[i - 1] + numeric_value[i]) / 2.0
-    # determin which is the best threshold.
-    if not threshold:
-        thresholdSelected = None
-        return thresholdSelected, infomin
-    threshold = sorted(list(set(threshold)))
-    thresholdSelected = threshold[0]
-    totalLength = cutdata[feature].shape[0]
-    for j in threshold:
-        upPart = cutdata[cutdata[feature] > j]['class'].value_counts()
-        loPart = cutdata[cutdata[feature] <= j]['class'].value_counts()
-        ptinf = info(upPart) * sum(upPart) / totalLength + info(loPart) * sum(loPart) / totalLength
-        if infomin > ptinf:
-            infomin = ptinf
-            thresholdSelected = j
-    return thresholdSelected, infomin
 
-~~~
-### Algorithm Implementation
-~~~
-def classify(root, feature, cutdata, feature_type):  # the current root, features not used, current data, featuretype.
-    infomin = np.inf
-    numerica_threshold = {}
-    instanceNumberAfterP = {}
-    for i in feature:
-        ptinf = 0
-
-        if 1:  # not i == root.value:  # root feature
-            tempSubInstNumber = {}
-            if feature_type[i][0] == 'nominal':
-                partitions = list(cutdata.groupby([i]).groups.keys())
-
-                for j in partitions:
-                    clss = class_count(cutdata[df[i] == j], feature_type['class'][1])
-                    tempSubInstNumber[j] = clss
-                    ptinf += info(clss) * (sum(clss) / cutdata[i].shape[0])
-                    if np.isnan(ptinf):
-                        pass
-                    # '+'in df[df['class']=='-']['class'].value_counts()
-            elif feature_type[i][0] == 'numeric':
-                partitions, ptinf = find_numeric_threshold(cutdata, i)
-                numerica_threshold[i] = partitions
-                if np.isnan(ptinf):
-                    pass
-                for j in ['g', 'l']:
-                    if j == 'g':
-                        clss_data = cutdata[cutdata[i] > partitions]
-                    elif j == 'l':
-                        clss_data = cutdata[cutdata[i] <= partitions]
-                    tempSubInstNumber[j] = class_count(clss_data, feature_type['class'][1])
-                    # gain = 0  # this gain is info after classfication, the smaller the better
-
+def MakeSubtree(root, D, Features, m):
+    features = Features._attrnames[:-1]
+    if len(D) >= m and len(Counter(D['class'])) > 1:
+        InfoGain, Splits = [], []
+        for X in features:
+            if Features[X][0] == 'numeric':
+                threshold, infogain = DetermineCandidateSplits(D, X)
+                InfoGain.append(infogain)
+                Splits.append(threshold)
             else:
-                # print('Unknown feature type, exit')
-                # exit()
-                pass
-            instanceNumberAfterP[i] = tempSubInstNumber
-        if infomin > ptinf:
-            infomin = ptinf
-            selected = i
-            instanceNumberAfterP[i] = tempSubInstNumber
-    return infomin, selected, numerica_threshold, instanceNumberAfterP[selected]
-~~~
-### Stop Critiron
-~~~
+                InfoGain.append(NominalSplit(Features, D, X))
+                Splits.append(Features[X][1])
 
-def STOP(cutdata, root, level, m, feature_type):
-    stop = False
-    if not root.typecounts[0] * root.typecounts[1]:  # 1
-        root.stopcrt = 1
-        stop = True
-    elif sum(root.typecounts) < m:  # 2
-        root.stopcrt = 2
-        stop = True
+        # break tie between two features
+        BestInfo = np.argwhere(InfoGain == np.amax(InfoGain)).flatten().tolist()
 
-    elif len(cutdata.columns) == 2:  # 4
-        if feature_type[0] == 'nominal':
-            stop = True  # if there is only one nominal feature left, we don't have more splits
-        root.stopcrt = 4
-    else:
-        pass
-    return stop
+        feature = features[BestInfo[0]]
+        split = Splits[BestInfo[0]]
 
-~~~
-~~~
-def det_class(root, class_list):  # class name list
-    if not root.typecounts[0] == root.typecounts[1]:
-        root.cls = class_list[np.argmax(root.typecounts)]
-    else:
-        det_class(root.parent, class_list)
-        root.cls = root.parent.cls
-
-~~~
-
-~~~
-def Make_sub_tree(cutdata, root, feature_type, level):
-    # ifStop()
-    class_list = feature_type['class'][1]
-    if STOP(cutdata, root, level, m, feature_type):
-        det_class(root, class_list)
-        return
-    # break
-    else:
-        infoTreeSplit, selectedFeature, numerica_threshold, classnumbers = classify(root, cutdata.columns[
-                                                                                          0:len(cutdata.columns) - 1],
-                                                                                    cutdata, feature_type)
-        # print(infoTreeSplit, selectedFeature, numerica_threshold)
-
-        if root.info <= infoTreeSplit:  # 3
-            root.stopcrt = 3
-            det_class(root, class_list)
+        if max(InfoGain) == 0:
+            root.feature = None
+            root.split = None
+            root.label = Counter(D['class'])
             return
-        if feature_type[selectedFeature][0] == 'nominal':
-            for featureEnumerate in feature_type[selectedFeature][1]:
-                existlist = list(cutdata.groupby(selectedFeature).groups.keys())
-                if featureEnumerate in existlist:
-                    root.sub.append(Tree(value=featureEnumerate, sub=[], type=selectedFeature, level=level + 1,
-                                         typecounts=classnumbers[featureEnumerate],
-                                         info=info(classnumbers[featureEnumerate]), parent=root))
-                    Make_sub_tree(cutdata[cutdata[selectedFeature] == featureEnumerate].drop(selectedFeature, axis=1),
-                                  root.sub[-1], feature_type, level + 1)
-                else:  # deal with the feature with empty instances
-                    root.sub.append(Tree(value=featureEnumerate, sub=[], type=selectedFeature, level=level + 1,
-                                         typecounts=[0, 0],
-                                         info=info([0, 0]), parent=root))
-                    root.sub[-1].stopcrt = 1
-                    det_class(root.sub[-1], class_list)
-                    return  # 1
-                    # df[df['A1'] == 'b'].drop('A1', axis=1)
-        elif feature_type[selectedFeature][0] == 'numeric':
-            root.sub.append(
-                Tree(value=numerica_threshold[selectedFeature], sub=[], type=selectedFeature, level=level + 1,
-                     sign='l', typecounts=classnumbers['l'], info=info(classnumbers['l']), parent=root))
-            Make_sub_tree(
-                cutdata[cutdata[selectedFeature] <= numerica_threshold[selectedFeature]],
-                root.sub[-1], feature_type, level + 1)
-            root.sub.append(
-                Tree(value=numerica_threshold[selectedFeature], sub=[], type=selectedFeature, level=level + 1,
-                     sign='g', typecounts=classnumbers['g'], info=info(classnumbers['g']),
-                     parent=root))  # l for less or equal , g for greater
-            Make_sub_tree(
-                cutdata[cutdata[selectedFeature] > numerica_threshold[selectedFeature]],
-                root.sub[-1], feature_type, level + 1)
-~~~
-### Print
-~~~
 
-def print_tree(root, feature_type):  # loop
-    if root.level > 0:
-        print('|	' * (root.level - 1), end='')
-        print_single_tree(root, feature_type)
-    if root.sub:
-        for j in root.sub:
-            print_tree(j, feature_type)
-
-
-def print_single_tree(root, feature_type):
-    if not root.sub:
-        if feature_type[root.type][0] == 'numeric':
-            if root.sign == 'l':
-                print(root.type.lower(), '<=', "{0:.6f}".format(root.value),
-                      '[' + str(root.typecounts[0]) + ' ' + str(root.typecounts[1]) + ']', end='')
-                print(':', root.cls)
-            elif root.sign == 'g':
-                print(root.type.lower(), '>', "{0:.6f}".format(root.value),
-                      '[' + str(root.typecounts[0]) + ' ' + str(root.typecounts[1]) + ']', end='')
-                print(':', root.cls)
-            else:
-                print('ERROR')
-        elif feature_type[root.type][0] == 'nominal':
-            print(root.type.lower(), '=', root.value,
-                  '[' + str(root.typecounts[0]) + ' ' + str(root.typecounts[1]) + ']', end='')
-            print(':', root.cls)
         else:
-            print('ERROR')
-    else:  # if leaf, we don't print the class out.
-        if feature_type[root.type][0] == 'numeric':
-            if root.sign == 'l':
-                print(root.type.lower(), '<=', "{0:.6f}".format(root.value),
-                      '[' + str(root.typecounts[0]) + ' ' + str(root.typecounts[1]) + ']')
-            elif root.sign == 'g':
-                print(root.type.lower(), '>', "{0:.6f}".format(root.value),
-                      '[' + str(root.typecounts[0]) + ' ' + str(root.typecounts[1]) + ']')
+            root.feature = feature
+            root.label = Counter(D['class'])
+            root.split = split
+            if Features[feature][0] == 'numeric':
+                root.children.append(Node(root))
+                MakeSubtree(root.children[-1], D[D[feature] <= split], Features, m)
+                root.children.append(Node(root))
+                MakeSubtree(root.children[-1], D[D[feature] > split], Features, m)
             else:
-                print('ERROR')
-        elif feature_type[root.type][0] == 'nominal':
-            print(root.type.lower(), '=', root.value,
-                  '[' + str(root.typecounts[0]) + ' ' + str(root.typecounts[1]) + ']')
+                for value in split:
+                    root.children.append(Node(root))
+                    MakeSubtree(root.children[-1], D[D[feature].str.decode('utf-8') == value], Features, m)
+
+
+    else:
+        if D.empty:
+            root.feature = None
+            root.split = None
+            root.label = {b'positive': 0, b'negative': 0}
+            return
         else:
-            print('ERROR')
+            root.feature = None
+            root.split = None
+            root.label = Counter(D['class'])
+        return
+
+~~~
+### Determine Class
+~~~
+def DetermineClass(root):
+    try:
+        a = list(root.label.items())[0]
+        b = list(root.label.items())[1]
+        if a[1] > b[1]:
+            return a[0].decode("utf-8")
+        elif a[1] == b[1]:
+            return DetermineClass(root.parent)
+        else:
+            return b[0].decode("utf-8")
+    except IndexError:
+        return list(root.label.keys())[0].decode("utf-8")
+
+    except AttributeError:
+        return 'negative'
 
 ~~~
 ### Prediction
 ~~~
-def predict_class(root, testData, feature_type):
-    if root.sub:
-        FeatureSplit = root.sub[0].type
-        a = testData[FeatureSplit]
-        if feature_type[FeatureSplit][0] == 'nominal':
-            for sub in root.sub:
-                if a.values[0] == sub.value:
-                    return predict_class(sub, testData, feature_type)
+def ClassPrediction(TestRow, root):
+    if root.children:
+        if type(root.split) == float:
+            if TestRow[root.feature] <= root.split:
+                return ClassPrediction(TestRow, root.children[0])
+            else:
+                return ClassPrediction(TestRow, root.children[1])
+        else:
+            for i in range(len(root.children)):
+                if TestRow[root.feature].decode('utf-8') == root.split[i]:
+                    return ClassPrediction(TestRow, root.children[i])
+            return DetermineClass(root)
+    else:
+        return DetermineClass(root)
+~~~
+### Print Preorder Tree
+~~~
+def PrintNumericNodes(split, labels, feature, direction):
+    if direction == 'left':
+        symbol = '<='
+    else:
+        symbol = '>'
+    if len(labels) == 1:
+        if list(labels.keys())[0] == b'negative':
+            print(feature, symbol, format(split, '.6f'), '[' + str(
+                labels[b'negative']) + ' ' + '0' + ']')
+        else:
+            print(
+                feature, symbol, format(split, '.6f'), '[' + '0' + ' ' + str(
+                    labels[b'positive']) + ']')
+    else:
+        print(feature, symbol, format(split, '.6f'), '[' + str(
+            labels[b'negative']) + ' ' +
+              str(labels[b'positive']) + ']')
+
+
+def PrintNumericLeaf(root, split, labels, feature, direction):
+    if direction == 'left':
+        symbol = '<='
+    else:
+        symbol = '>'
+    if len(labels) == 1:
+        if list(labels.keys())[0] == b'negative':
+            print(feature, symbol, format(split, '.6f'), '[' + str(
+                labels[b'negative']) + ' ' + '0' + ']:' + ' ' + 'negative')
+        else:
+            print(feature, symbol, format(split, '.6f'), '[' + '0' + ' ' + str(
+                labels[b'positive']) + ']:' + ' ' + 'positive')
+    else:
+        print(feature, symbol, format(split, '.6f'), '[' + str(
+            labels[b'negative']) + ' ' +
+              str(labels[b'positive']) + ']', end='')
+        print(':', DetermineClass(root))
+
+
+def PreorderTree(root, level, direction):
+    if root.children:
+        print('|    ' * level, end='')
+        split = root.parent.split
+        labels = root.label
+        feature = root.parent.feature
+        if direction == 'left':
+            PrintNumericNodes(split, labels, feature, direction)
+
+        else:
+            PrintNumericNodes(split, labels, feature, direction)
+        if type(root.split) == float:
+            PreorderTree(root.children[0], level + 1, direction='left')
+            PreorderTree(root.children[1], level + 1, direction='right')
+        else:
+            for child in root.children:
+                PrintNominalNodes(child, level + 1)
+    else:
+        labels = root.label
+        feature = root.parent.feature
+        split = root.parent.split
+        print('|    ' * level, end='')
+        if direction == 'left':
+            PrintNumericLeaf(root, split, labels, feature, direction)
+        else:
+            PrintNumericLeaf(root, split, labels, feature, direction)
+
+
+def PrintNominalNodes(root, level):
+    print('|    ' * level, end='')
+    split = root.parent.split
+    labels = root.label
+    feature = root.parent.feature
+    Index = root.parent.children.index(root)
+    if root.children:
+        if len(labels) == 1:
+            if list(labels.keys())[0] == b'negative':
+                print(feature, '=', split[Index], '[' + str(
+                    labels[b'negative']) + ' ' + '0' + ']')
+            else:
+                print(feature, '=', split[Index], '[' + '0' + ' ' + str(
+                    labels[b'positive']) + ']')
+        else:
+            print(feature, '=', split[Index], '[' + str(
+                labels[b'negative']) + ' ' + str(labels[b'positive']) + ']')
+            printotherTree(root, level + 1)
+
+    else:
+        if len(labels) == 1:
+            if list(labels.keys())[0] == b'negative':
+                print(feature, '=', split[Index], '[' + str(
+                    labels[b'negative']) + ' ' + '0' + ']:' + ' ' + 'negative')
+            else:
+                print(feature, '=', split[Index], '[' + '0' + ' ' + str(
+                    labels[b'positive']) + ']:' + ' ' + 'positive')
+        else:
+            print(feature, '=', split[Index], '[' + str(
+                labels[b'negative']) + ' ' + str(labels[b'positive']) + ']:', end='')
+            print(DetermineClass(root))
+
+
+def printotherTree(root, level):
+    if type(root.split) == float:
+        PreorderTree(root.children[0], level, direction='left')
+        PreorderTree(root.children[1], level, direction='right')
+    else:
+        for child in root.children:
+            PrintNominalNodes(child, level)
+
+
+def PrintTree(root, level):
+    if not root.parent:
+
+        if type(root.split) == float:
+            PreorderTree(root.children[0], level, direction='left')
+            PreorderTree(root.children[1], level, direction='right')
+        else:
+            for child in root.children:
+                PrintNominalNodes(child, level)
+
+    pass
+
+
+def Diff(list1, list2):
+    count = 0
+    for row in np.array([list1, list2]).T:
+        if row[0] == row[1]:
             pass
         else:
-            if not len(a) == 1:
-                print('ERROR in a length')
-            if a.item() <= root.sub[0].value:
-                return predict_class(root.sub[0], testData, feature_type)
-            else:
-                return predict_class(root.sub[1], testData, feature_type)
-    else:
-        return root.cls
-
-    pass
+            count = count + 1
+    return count
 
 
-def class_count(data, class_list):  # string of class attribute
-    cls_count = [0] * 2
-    raw_list = data['class'].value_counts()
-    if class_list[0] in raw_list:
-        cls_count[0] = int(raw_list[class_list[0]])
-    if class_list[1] in raw_list:
-        cls_count[1] = int(raw_list[class_list[1]])
-    return cls_count  # list of length 2, order: first class in class lsit, second class in class list.
+def TestTree(traindata, Features, TestData, m):
+    root = Node(None)
+    MakeSubtree(root, traindata, Features, m)
+    PrintTree(root, 0)
+    print('<Predictions for the Test Set Instances>')
+    Predict, Actual = [], []
+    for index, row in TestData.iterrows():
+        predict = ClassPrediction(row, root)
+        actual = row['class'].decode("utf-8")
+        print(str(index + 1) + ':' + ' ' + 'Actual:', end=' ')
+        print(actual, end=' ')
+        print('Predicted:', end=' ')
+        print(predict)
+        Predict.append(predict)
+        Actual.append(actual)
+    lenA = len(Actual)
+    corr = lenA - Diff(Predict, Actual)
+    print('Number of correctly classified:', end=' ')
+    print(corr, end=' ')
+    print('Total number of test instances:', end=' ')
+    print(lenA)
+    return corr, lenA
+
 ~~~
-
-### Main
+### Main Function
 ~~~
-
-if __name__ == '__main__':
-
-    m = int(sys.argv[3])
+def main():
     train_file = sys.argv[1]
     test_file = sys.argv[2]
-    '''
-    m = 10
-    train_file = 'credit_train.arff'
-    test_file = 'credit_test.arff'
-    '''
-    data = arff.loadarff(train_file)
-
-    df = pd.DataFrame(data[0])  # .drop('A3',axis=1)
-    feature_type = data[1]
-    for i in df.columns:
-        if feature_type[i][0] == 'nominal':
-            df[i] = df[i].apply(convert)
-    class_list = data[1]['class'][1]
-    rootInfo = class_count(df, class_list)
-
-    # -----------------------generate root------------------
-    Root = Tree(level=0, typecounts=rootInfo, info=info(rootInfo))  # this is the constructed tree
-    Make_sub_tree(df, Root, data[1], 0)
-    # --------------print out the constructed tree
-    print_tree(Root, data[1])
-    # ---------------------prediction.
-    # convert the test data into df
-    datatest = arff.loadarff(test_file)
-    dft = pd.DataFrame(datatest[0])  # .drop('A3',axis=1)
-    feature_typetest = datatest[1]
-    for i in dft.columns:
-        if feature_typetest[i][0] == 'nominal':
-            dft[i] = dft[i].apply(convert)
-    correctPrediction = 0
-    print('<Predictions for the Test Set Instances>')
-    for i in range(dft.shape[0]):
-        instance = dft.iloc[[i]]  #
-        print(str(i + 1) + ':', 'Actual:', instance['class'].values[0], end=' ')
-        predicted = predict_class(Root, instance.drop('class', axis=1), feature_typetest)
-        print('Predicted:', predicted)
-        if predicted == instance['class'].values[0]:
-            correctPrediction += 1
-        pass
-    print('Number of correctly classified:', correctPrediction, 'Total number of test instances:', dft.shape[0], end='')
-    pass
+    m = int(sys.argv[3])
+    TrainData = pd.DataFrame(arff.loadarff(train_file)[0])
+    Features = arff.loadarff(train_file)[1]
+    TestData = pd.DataFrame(arff.loadarff(test_file)[0])
+    corr, lenA = TestTree(TrainData, Features, TestData, m)
 ~~~
+
