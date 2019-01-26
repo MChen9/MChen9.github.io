@@ -2,7 +2,7 @@
 layout: post
 title: Movies Recommendation I
 subtitle: Hana & Alice
-bigimg: /img/timg.jepg
+bigimg: /img/timg.jpeg
 tags: [movies, reviews]
 ---
 
