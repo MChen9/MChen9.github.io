@@ -2,7 +2,7 @@
 layout: post
 title: Novels Recommendation I
 subtitle: One Hundred Years of Solitude
-tags: [movies, reviews]
+tags: [novels, reviews]
 ---
 
 wiki: https://en.wikipedia.org/wiki/One_Hundred_Years_of_Solitude
