@@ -24,7 +24,8 @@ subtitle: Story About Minmin Chen
 
 ### My Work Experience
 ------
-#### Summer Intern at Shenzhen URASR Beta Investment Consulting co. LTD May - Sep 2018
+#### Summer Intern at Shenzhen URASR Beta Investment Consulting co. LTD 
+*May - Sep 2018*
 **Text Analysis in Stock Price Trends Prediction on Python**
 - Developed models for predicting stock price trends by employing revised TFIDF(Term FrequencyInverse Document Frequency) to vectorize related financial news documents, implemented by Python
 - Scrawled data from dynamic and static websites by Selenium and BeautifulSoup, collected and cleaned data of varied length by Pandas and Numpy, managed data by MySQL
@@ -35,6 +36,26 @@ subtitle: Story About Minmin Chen
 - Developed a tool for automatic visualization of time series data on Java, to provide statistical analysis
 - DevelopedatoolforautomaticscrawlingGeoDataandvisualizationonJava,toprovide30-minpublictransitaccessib
 
-### my history
+### My Course Project
+------
+**Movie Reviews Classifier on Java**
+*Sep - Dec 2018*
+- Developed a system for evaluating perceived trustworthiness of users by feeding raw movie reviews text and user profiles text, text lengths are around 100 words, implemented on Java
+- The system carries out dynamic web crawler, data storing in SQlite, automatically labeling, tokenization, vectorization, similarity calculation, feature engineering, training and prediction, reached average of 85% accuracy
 
-to be updated...
+**Machine Learning Packages Development on Python**
+*Sep - Dec 2018*
+- Implemented Neural Network, Decision Tree, Naive Bayes, TAN, Logistic Regression, based on Numpy and Pandas
+Temporal Convolutional Network on TensorFlow Oct - Dec 2018
+- Implemented the state-of-art model TCN for analysing sequence data, including 1D convolution, dilated causal convolu-
+tion and residual connection by TensorFlow
+- Compared performance of TCN with that of LSTM/GRU over sequence modeling tasks, e.g. MNIST, P-MNIST, Adding
+Problem, achieved 96% accuracy
+- Implemented TCN to solve tweet sentiment analysis problem
+
+**TSP Delivery Software in Madison on GAMS**
+*Oct - Dec 2017*
+- Developed a software for a restaurant to deliver pizza to the customers in Madison using minimal time and resources
+- Implemented Dynamic Programming to find shortest path and visualized trajectory on Python, solved the delivery model
+by GAMS, integrated the software on Linux
+- Solution verification: average cost per delivery decreases by 16.43%, according to previous data
