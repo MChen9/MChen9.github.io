@@ -5,23 +5,25 @@ subtitle: Story About Minmin Chen
 ---
 
 ### My Academic History
+------
 - I got my master degree in **University of Wisconsin-Madison** on December 28, 2018, majoring in Industrial Engineering.
 - I got bachelor degree in **University of Science and Technology Beijing** on June 17, 2017, majoring in Engineering Management.
 
-
 ### My Technical Skills
-#### Computer Languages
+------
+**Computer Languages**
 Java, C/C++, Python, JavaScript, HTML, R, MATLAB, LaTeX, GAMS
-#### Framework
+**Framework**
 Django, Hadoop, Tensorflow, Keras, BeautifulSoup, Selenium
-#### Database
+**Database** 
 MongoDB, MySQL, SQlite, NoSQL
-#### Tools
+**Tools**
 IntelliJ, Git, Vim, Sublime, Pycharm, Linux, Tableau, Excel, Minitab, Arena, QGIS
-#### Optimization
+**Optimization**
 Linear Programming, Integer Programming, Nonlinear Programming
 
-
+### My Work Experience
+------
 
 - Operation Research
 - Machine Learning
