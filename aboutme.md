@@ -1,10 +1,12 @@
 ---
 layout: page
 title: About me
-subtitle: Website is building...
+subtitle: Story About Minmin Chen
 ---
 
-This websites is for recording the track of my study.
+### My Academic History
+- I got my master degree in University of Wisconsin-Madison on Dec 28,2018.
+- I was an undergraduate in University of Science and Technology Beijing.
 
 - Operation Research
 - Machine Learning
