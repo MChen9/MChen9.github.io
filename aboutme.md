@@ -24,11 +24,16 @@ subtitle: Story About Minmin Chen
 
 ### My Work Experience
 ------
+#### Summer Intern at Shenzhen URASR Beta Investment Consulting co. LTD May - Sep 2018
+**Text Analysis in Stock Price Trends Prediction on Python**
+- Developed models for predicting stock price trends by employing revised TFIDF(Term FrequencyInverse Document Frequency) to vectorize related financial news documents, implemented by Python
+- Scrawled data from dynamic and static websites by Selenium and BeautifulSoup, collected and cleaned data of varied length by Pandas and Numpy, managed data by MySQL
+- Adapted segmentation algorithm for fitting stock trends, and used segment trends as labels for classifier, implemented algorithms by Python
+- Employed SVM, SGD,Random Forest, Neural Network to train data, and implemented ten-fold crossed validation to evaluate the results, reached average of 92% accuracy
 
-- Operation Research
-- Machine Learning
-
-What else do you need?
+**Visualization Tools Development on Java**
+- Developed a tool for automatic visualization of time series data on Java, to provide statistical analysis
+- DevelopedatoolforautomaticscrawlingGeoDataandvisualizationonJava,toprovide30-minpublictransitaccessib
 
 ### my history
 
