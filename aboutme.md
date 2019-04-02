@@ -5,8 +5,8 @@ subtitle: Story About Minmin Chen
 ---
 
 ### My Academic History
-- I got my master degree in **University of Wisconsin-Madison** on Dec 28, 2018, majoring in Industrial Engineering.
-- I was an undergraduate in **University of Science and Technology Beijing**, majoring in Engineering Management.
+- I got my master degree in **University of Wisconsin-Madison** on December 28, 2018, majoring in Industrial Engineering.
+- I got bachelor degree in **University of Science and Technology Beijing** on June 17, 2017, majoring in Engineering Management.
 
 
 ### My Technical Skills
