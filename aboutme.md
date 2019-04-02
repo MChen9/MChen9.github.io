@@ -48,7 +48,9 @@ subtitle: Story About Minmin Chen
 **Machine Learning Packages Development on Python**
 *Sep - Dec 2018*
 - Implemented Neural Network, Decision Tree, Naive Bayes, TAN, Logistic Regression, based on Numpy and Pandas
-Temporal Convolutional Network on TensorFlow Oct - Dec 2018
+
+**Temporal Convolutional Network on TensorFlow**
+*Oct - Dec 2018*
 - Implemented the state-of-art model TCN for analysing sequence data, including 1D convolution, dilated causal convolu-
 tion and residual connection by TensorFlow
 - Compared performance of TCN with that of LSTM/GRU over sequence modeling tasks, e.g. MNIST, P-MNIST, Adding
