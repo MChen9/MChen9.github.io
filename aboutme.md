@@ -11,15 +11,15 @@ subtitle: Story About Minmin Chen
 
 ### My Technical Skills
 ------
-**Computer Languages** Java, C/C++, Python, JavaScript, HTML, R, MATLAB, LaTeX, GAMS
+**Computer Languages**    Java, C/C++, Python, JavaScript, HTML, R, MATLAB, LaTeX, GAMS
 
-**Framework** Django, Hadoop, Tensorflow, Keras, BeautifulSoup, Selenium
+**Framework**    Django, Hadoop, Tensorflow, Keras, BeautifulSoup, Selenium
 
-**Database** MongoDB, MySQL, SQlite, NoSQL
+**Database**    MongoDB, MySQL, SQlite, NoSQL
 
-**Tools** IntelliJ, Git, Vim, Sublime, Pycharm, Linux, Tableau, Excel, Minitab, Arena, QGIS
+**Tools**    IntelliJ, Git, Vim, Sublime, Pycharm, Linux, Tableau, Excel, Minitab, Arena, QGIS
 
-**Optimization** Linear Programming, Integer Programming, Nonlinear Programming
+**Optimization**    Linear Programming, Integer Programming, Nonlinear Programming
 
 ### My Work Experience
 ------
