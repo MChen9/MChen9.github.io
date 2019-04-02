@@ -25,7 +25,9 @@ subtitle: Story About Minmin Chen
 ### My Work Experience
 ------
 #### Summer Intern at Shenzhen URASR Beta Investment Consulting co. LTD 
+
 *May - Sep 2018*
+
 **Text Analysis in Stock Price Trends Prediction on Python**
 - Developed models for predicting stock price trends by employing revised TFIDF(Term FrequencyInverse Document Frequency) to vectorize related financial news documents, implemented by Python
 - Scrawled data from dynamic and static websites by Selenium and BeautifulSoup, collected and cleaned data of varied length by Pandas and Numpy, managed data by MySQL
